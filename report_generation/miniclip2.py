@@ -1,25 +1,22 @@
 import torch
 import json
 import csv
-import requests
-from PIL import Image
 from datasets import load_dataset
 from transformers import AutoModel, AutoTokenizer
 from torchvision.transforms.functional import pil_to_tensor
 from torchmetrics.multimodal.clip_score import CLIPScore
-from PIL import Image
 from transformers import BlipProcessor, BlipForImageTextRetrieval
 
 # description model
-model = AutoModel.from_pretrained('openbmb/MiniCPM-Llama3-V-2_5', trust_remote_code=True, torch_dtype=torch.float16)
+model = AutoModel.from_pretrained('openbmb/MiniCPM-Llama3-V-2_5', trust_remote_code=True, torch_dtype=torch.float16, resume_download=True)
 model = model.to(device='cuda')
 # tokenizer
-tokenizer = AutoTokenizer.from_pretrained('openbmb/MiniCPM-Llama3-V-2_5', trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained('openbmb/MiniCPM-Llama3-V-2_5', trust_remote_code=True, resume_download=True)
 model.eval()
 
 # blip model
-processor = BlipProcessor.from_pretrained("Salesforce/blip-itm-base-coco")
-blipmodel = BlipForImageTextRetrieval.from_pretrained("Salesforce/blip-itm-base-coco")
+processor = BlipProcessor.from_pretrained("Salesforce/blip-itm-base-coco", resume_download=True)
+blipmodel = BlipForImageTextRetrieval.from_pretrained("Salesforce/blip-itm-base-coco", resume_download=True)
 
 dataset = load_dataset("sartajbhuvaji/Brain-Tumor-Classification")
 
@@ -153,5 +150,5 @@ def main(input, output):
 
 if __name__ == "__main__":
     input_csv = 'mri_descriptions.csv'
-    output_json = 'mri_reports.json'
+    output_json = 'mri_reports3.json'
     main(input_csv, output_json)
