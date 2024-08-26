@@ -13,7 +13,7 @@ pipe = pipeline("image-to-text", model=model_id, device="cuda:2")
 def descript(image, label):
     dic_class = {0:"glioma", 1:"meningioma", 2:"no", 3:"pituitary"}
     # image, label = example['image'], example['label']
-        
+
     # if dic_class[label] != 2:
     #     prompt = f"USER: <image>\nGenerate a report of the displayed MRI, is it T1 or T2 weighted? In which area of the brain is located the tumor, \
     #             and can you locate where the {dic_class[label]} tumor is ? \
@@ -35,7 +35,7 @@ def descript(image, label):
 
     outputs = pipe(image, prompt=prompt, generate_kwargs={"max_new_tokens": 200})
     description = outputs[0]['generated_text'].split("ASSISTANT: ", maxsplit=1)[1]
-    
+
     return description
 
 
@@ -43,18 +43,12 @@ def main():
     # Open a CSV file to write the descriptions
     with open('mri_descriptions2.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
-        
-        # Write the header
         csvwriter.writerow(['Index', 'Description'])
-        
-        # Process each example in the training set
+
+        # Process the training set
         for index, example in enumerate(tqdm(dataset['Training'])):
             description = descript(example['image'], example['label'])
             csvwriter.writerow([index, description])
-            
-            # Optional: print every 10th description to monitor progress
-            if index % 10 == 0:
-                print(f"Index {index}: {description}")
 
     print("Descriptions have been saved to mri_descriptions.csv")
 
